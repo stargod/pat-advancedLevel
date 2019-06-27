@@ -1,0 +1,55 @@
+#include<iostream>
+#include<queue>
+#include <iomanip>
+using namespace std;
+
+queue<int> line[21];
+int costuomerRemove[1001];
+int windowCount,lineMaxLenth,costuomerNum,queriesNum;
+int costuomerCost[1001];
+int calMinLine() {
+	int minWindow = 1,minCost = line[1].front();;
+	for (int i = 2; i <= windowCount; i++) {
+		int cost = line[i].front();
+		if (cost < minCost) {
+			minWindow = i;
+			minCost = cost;
+		}
+	}
+	return minWindow;
+}
+int main(){
+	ios::sync_with_stdio(false);
+	cin >> windowCount >> lineMaxLenth >> costuomerNum >> queriesNum;
+	int tempCostumer;
+	int tempCost,firstNum = 0;
+	for (int i = 1; i <= costuomerNum; i++) {
+		cin >> costuomerCost[i];
+		tempCost = costuomerCost[i];
+		int minLine = 0;
+		if (firstNum < windowCount * lineMaxLenth) {
+			minLine = firstNum % windowCount +1;
+			if (line[minLine].size() > 0) {
+				tempCost += line[minLine].back();
+			}
+			firstNum ++;
+		} else {
+			minLine = calMinLine();
+		    tempCost += line[minLine].back();
+			line[minLine].pop();
+		}
+		line[minLine].push(tempCost);
+		costuomerRemove[i] = tempCost;
+	}
+
+	for (int i = 1; i <= queriesNum; i++) {
+		cin >> tempCostumer;
+		int costTime = costuomerRemove[tempCostumer];
+		if (costTime - costuomerCost[tempCostumer] >= 540) {
+			cout << "Sorry" <<endl;
+		} else {
+			cout << setw(2) << setfill('0')<< costTime/60 + 8 << ":" << setw(2) << setfill('0')<< costTime % 60 << endl;
+		}
+	}
+	return 0;
+}
