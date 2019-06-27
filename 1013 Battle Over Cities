@@ -1,0 +1,41 @@
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+bool city[1001];
+int lines[1001][1001];
+int a,b;
+int n,m,k;
+int repairNum,lostCity;
+void dsf(int n);
+int main() {
+	std::ios::sync_with_stdio(false);
+	cin >> n >> m >> k;
+	for (int i = 0; i < m;i++) {
+		cin >> a >> b;
+		lines[a][b] = lines[b][a] = 1;
+	}
+	for (int i = 0; i < k; i ++) {
+		fill(city, city + 1001, false);
+		repairNum = 0;
+		cin >> lostCity;
+		city[lostCity] = true;
+		for (int j = 1;j <= n; j++) {
+			if (city[j] == false) {
+				dsf(j);
+				repairNum++;
+			}
+		}
+	cout<<repairNum -1 <<endl;
+	}
+
+	return 0;
+}
+void dsf(int findCity) {
+	city[findCity] = true;
+	for (int i = 1;i <= n; i++) {
+		if (city[i] == false && lines[findCity][i] == 1) {
+			dsf(i);
+		}
+	}
+}
