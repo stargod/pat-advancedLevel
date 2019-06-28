@@ -1,0 +1,45 @@
+#include<cstdio>
+#include <cmath>
+using namespace std;
+
+bool calPrime(int number) {
+	if (number <= 1) {
+		return false;
+	}
+	int max = sqrt(number * 1.0);
+	for (int i = 2; i <= max; i++) {
+		if(number % i == 0) {
+			return false;
+		}
+	}
+	return true;
+}
+int main() {
+	int number, radix;
+	while(true) {
+		scanf("%d", &number);
+		if (number < 0) {
+			break;
+		}
+		scanf("%d",&radix);
+		int transNumber = 0;
+		if (!calPrime(number)) {
+			printf("No\n");
+			continue;
+		}
+		while(true) {
+			transNumber = transNumber*radix + number % radix;
+			if (number / radix != 0) {
+				number = number / radix;
+			} else {
+				break;
+			}
+		}
+		if (calPrime(transNumber)) {
+			printf("Yes\n");
+		} else {
+			printf("No\n");
+		}
+	}
+	return 0;
+}
