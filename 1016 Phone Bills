@@ -1,0 +1,75 @@
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+string status_online = "on-line";
+string status_offline = "off-line";
+int rate[24];
+struct record{
+	int month,day,hour,minute;
+	string name;
+	string status;
+	int time;
+};
+vector<record> recordVector;
+
+map<string,int> nameToTotalMap;
+vector<string> nameVector;
+double calMoney(record beforeRecord, record nowRecord) {
+	double money = 0;
+	int begin = beforeRecord.hour + beforeRecord.day * 24;
+	int end = nowRecord.hour + nowRecord.day * 24;
+	for (int i = begin; i <= end; i ++) {
+		money += rate[i % 24];
+	}
+	money *= 60;
+	money -= rate[beforeRecord.hour] * (beforeRecord.minute);
+	money -= rate[nowRecord.hour] * (60 - nowRecord.minute);
+	money /= 100.0;
+	return money;
+}
+bool compair(record a,record b) {
+	return a.name == b.name ? a.time < b.time: a.name < b.name;
+}
+int main() {
+	ios::sync_with_stdio(false);
+	for (int i = 0; i < 24; i++) {
+		cin >> rate[i];
+	}
+	int recordNum;
+	cin >> recordNum;
+	record beforeRecord;
+	char m;
+	for (int i = 0; i < recordNum; i++) {
+		record nowRecord;
+		cin >> nowRecord.name;
+		cin >> nowRecord.month >> m >> nowRecord.day >> m >> nowRecord.hour>> m >> nowRecord.minute;
+		cin >> nowRecord.status;
+		nowRecord.time = nowRecord.day * 24 * 60 + nowRecord.hour * 60 + nowRecord.minute;
+		recordVector.push_back(nowRecord);
+	}
+	sort(recordVector.begin(), recordVector.end(), compair);
+	map<string,vector<record>> nameToRecordMap;
+	for (int i = 1; i < recordVector.size(); i++) {
+		if (recordVector[i-1].name == recordVector[i].name && recordVector[i-1].status.compare(status_online) == 0 && recordVector[i].status.compare(status_offline) == 0){
+			nameToRecordMap[recordVector[i-1].name].push_back(recordVector[i-1]);
+			nameToRecordMap[recordVector[i].name].push_back(recordVector[i]);
+		}
+	}
+	map<string,record>::iterator it;
+	for (auto a = nameToRecordMap.begin(); a != nameToRecordMap.end(); a++) {
+		vector<record> temp = a ->second;
+		printf("%s",temp[0].name.c_str());
+		printf(" %02d\n", temp[0].month);
+		double total = 0;
+		for (int i = 1 ;i < temp.size(); i +=2) {
+			double money = calMoney(temp[i-1], temp[i]);
+			total += money;
+			printf("%02d:%02d:%02d %02d:%02d:%02d %d $%.2f\n", temp[i-1].day, temp[i-1].hour, temp[i-1].minute, temp[i].day, temp[i].hour, temp[i].minute, temp[i].time - temp[i-1].time, money);
+		}
+		printf("Total amount: $%.02f\n", total);
+    }
+	return 0;
+}
