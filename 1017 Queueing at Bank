@@ -1,0 +1,65 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<string>
+#include<algorithm>
+#include<climits>
+#include<cmath>
+using namespace std;
+map<int,int> timeToCost;
+vector<int> timeVector;
+int coustomNum,windowNum;
+int openTime = 8*60*60;
+int closeTime = 17*60*60;
+struct timeUnit {
+	int hour;
+	int minute;
+	int second;
+};
+int endTime[100];
+int findMin() {
+	int min = 0;
+	int minTime = INT_MAX;
+	for (int i = 0; i < windowNum; i++) {
+		if (endTime[i] < minTime) {
+			minTime = endTime[i];
+			min = i;
+		}
+	}
+	return min;
+}
+int main() {
+	cin >> coustomNum >> windowNum;
+	fill(endTime,endTime+100, openTime);
+	for (int i = 0; i < coustomNum; i++) {
+		int hour;
+		int minute;
+		int second;
+		int cost;
+		scanf("%d:%d:%d%d", &hour, &minute, &second, &cost);
+		int time = hour*60*60 + minute*60 + second;
+		timeVector.push_back(time);
+		timeToCost[time] = cost;
+	}
+	sort(timeVector.begin(),timeVector.end());
+	
+	int waitTime = 0;
+	int serveNum = 0;
+	for (int i = 0; i < coustomNum; i++) {
+		if (timeVector[i] > closeTime) {
+			break;
+		}
+		int minWindow = findMin();
+		int windowTime = endTime[minWindow];
+		if (windowTime > timeVector[i]) {
+			waitTime += windowTime - timeVector[i];
+			endTime[minWindow] += timeToCost[timeVector[i]]*60;
+		} else {
+			endTime[minWindow] = timeVector[i] + timeToCost[timeVector[i]]*60;
+		}
+		serveNum++;
+	}
+	double aveWait = waitTime * 1.0/serveNum/6/10.0;
+	printf("%.1f", aveWait);
+	return 0;
+}
