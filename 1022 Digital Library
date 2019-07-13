@@ -1,0 +1,49 @@
+#include<iostream>
+#include <string>
+#include<map>
+#include <set>
+using namespace std;
+
+map<string,set<string>> indexMap[6];
+int main(){
+	int bookNum,queryNum;
+	cin >> bookNum;
+	for (int i =0;i<bookNum;i++){
+		string title,author,keyword,publisher,year;
+		string number;
+		cin >> number;
+		getchar();
+		getline(cin,title);
+		indexMap[1][title].insert(number);
+		getline(cin,author);
+		indexMap[2][author].insert(number);
+		while(true) {
+			cin >> keyword;
+			indexMap[3][keyword].insert(number);
+			char achar = getchar();
+			if (achar == '\n') {
+				break;
+			}
+		}
+		getline(cin,publisher);
+		indexMap[4][publisher].insert(number);
+		getline(cin,year);
+		indexMap[5][year].insert(number);
+	}
+	cin >> queryNum;
+	for (int i =0;i<queryNum;i++){
+		int queryType;
+		scanf("%d: ", &queryType);
+		string queryKey;
+		getline(cin,queryKey);
+		cout << queryType << ": " << queryKey <<endl;
+		if (indexMap[queryType][queryKey].size() == 0) {
+			cout << "Not Found" <<endl;
+		} else {
+			for (auto it = indexMap[queryType][queryKey].begin(); it != indexMap[queryType][queryKey].end(); it ++) {
+				cout << *it <<endl;
+			}
+		}
+	}
+	return 0;
+}
