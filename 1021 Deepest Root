@@ -1,0 +1,75 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+using namespace std;
+
+int num;
+vector<int> edge[10001];
+bool pointArrive[10001];
+int pointDepth[10001];
+int dsf(int point) {
+	int maxLevel = 1;
+	for(int i=0;i<edge[point].size();i++) {
+		if (!pointArrive[edge[point][i]]) {
+			pointArrive[edge[point][i]] = true;
+			int tempLevel =  dsf(edge[point][i]) + 1;
+			if (tempLevel > maxLevel) {
+				maxLevel = tempLevel;
+			}
+		}
+	}
+	return maxLevel;
+}
+int main(){
+	cin >> num;
+	for (int i=0; i<num-1;i++) {
+		int pointA,pointB;
+		cin >> pointA >> pointB;
+		edge[pointA].push_back(pointB);
+		edge[pointB].push_back(pointA);
+	}
+	pointArrive[1]=true;
+	pointDepth[1] = dsf(1);
+	int notArriveNum=0;
+	for (int i=1;i <=num;i++) {
+		if (pointArrive[i] == false) {
+			notArriveNum=i;
+			break;
+		}
+	}
+	int componentNum = 1;
+	while(notArriveNum != 0) {
+		pointArrive[notArriveNum]=true;
+		dsf(notArriveNum);
+		componentNum++;
+		notArriveNum = 0;
+		for (int i=1;i <=num;i++) {
+			if (pointArrive[i] == false) {
+				notArriveNum=i;
+				break;
+			}
+		}
+	}
+	if (componentNum != 1) {
+		cout << "Error: "<< componentNum <<" components";
+		return 0;
+	}
+	for (int i=2;i <=num;i++) {
+		fill(pointArrive,pointArrive+10001,false);
+		pointArrive[i]=true;
+		pointDepth[i] = dsf(i);
+	}
+	int maxLevel = 1;
+	for (int i=1;i <=num;i++) {
+		if (pointDepth[i] > maxLevel) {
+				maxLevel = pointDepth[i];
+		}
+	}
+
+	for (int i=1;i <=num;i++) {
+		if (pointDepth[i] == maxLevel) {
+				cout << i <<endl;
+		}
+	}
+	return 0;
+}
