@@ -1,0 +1,54 @@
+#include<iostream>
+#include<queue>
+using namespace std;
+
+int tree[31][2];
+int postorder[31];
+int inorder[31];
+int lenth = 0;
+queue<int> printQueue;
+int createTree(int begin,int end,int begin2,int end2) {
+	if (end < begin) {
+		return 0;
+	}
+	if (end == begin) {
+		return postorder[end];
+	}
+	int head = postorder[end];
+	for (int i = begin2;i<=end2;i++) {
+		if (inorder[i] == head) {
+			tree[head][0] = createTree(begin, begin +i-begin2-1,begin2,i-1);
+			tree[head][1] = createTree(begin +i-begin2, end-1,i+1,end2);
+		}
+	}
+	return head;
+}
+int main(){
+	cin >> lenth;
+	for (int i = 0;i<lenth;i++) {
+		cin >> postorder[i];
+	}
+	for (int i = 0;i<lenth;i++) {
+		cin >> inorder[i];
+	}
+	createTree(0, lenth-1,0, lenth-1);
+	printQueue.push(postorder[lenth-1]);
+	bool begin = true;
+	while(printQueue.size() != 0){
+		int seed = printQueue.front();
+		printQueue.pop();
+		if(begin){
+			cout << seed;
+			begin = false;
+		} else {
+			cout << " " << seed;
+		}
+		if(tree[seed][0] != 0) {
+			printQueue.push(tree[seed][0]);
+		}
+		if(tree[seed][1] != 0) {
+			printQueue.push(tree[seed][1]);
+		}
+	}
+	return 0;
+}
