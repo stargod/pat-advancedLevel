@@ -1,0 +1,32 @@
+#include<iostream>
+using namespace std;
+
+long digits[9999];
+int lenth = 0;
+int main(){
+	long n,base;
+	cin >> n >> base;
+	while(true) {
+		if (n ==0) {
+			break;
+		}
+		long digit = n%base;
+		n=n/base;
+		digits[lenth++] = digit;
+	}
+	bool isPalindromic=true;
+	for (int i = 0;i<lenth/2;i++) {
+		if (digits[i] != digits[lenth-1-i]) {
+			isPalindromic = false;
+		}
+	}
+	cout << (isPalindromic? "Yes":"No")<<endl;
+	for (int i = lenth-1;i>=0;i--) {
+		if (i == lenth-1) {
+			cout << digits[i];
+		} else {
+			cout << " " << digits[i];
+		}
+	}
+	return 0;
+}
