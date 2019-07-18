@@ -1,0 +1,117 @@
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include <cmath>
+using namespace std;
+
+struct custom{
+	int hour,minute,second,play_time;
+	int time;
+	int is_vip;
+	int wait_time;
+	int serve_time;
+};
+vector<custom> custom_queue;
+vector<custom> result_queue;
+int table_time[101];
+int table_serve_num[101];
+bool is_table_vip[101];
+
+int table_num,vip_table_num;
+int close_time = 21*60*60;
+
+int find_min_table(custom in_costom){
+	int i=0;
+	if(in_costom.is_vip){
+		int min_time = close_time;
+		int min_table=-1;
+		for(i=0; i<table_num;i++){
+			if(table_time[i] < min_time && is_table_vip[i]) {
+				min_time = table_time[i];
+				min_table = i;
+			}
+		}
+		if (min_table != -1 && min_time <= in_costom.time) {
+			return min_table;
+		}
+	}
+	int min_time = table_time[0];
+	int min_table=0;
+	for(i=0; i<table_num;i++){
+		if(table_time[i] < min_time) {
+			min_table = i;
+			min_time = table_time[i];
+		}
+	}
+	return min_table;
+}
+int sort_queue(custom a,custom b){
+	return a.time < b.time;
+}
+int main () {
+	int custom_num;
+	cin >> custom_num;
+	for (int i =0;i<custom_num;i++) {
+		custom temp_custom;
+		scanf("%d:%d:%d%d%d",&temp_custom.hour,&temp_custom.minute,&temp_custom.second,&temp_custom.play_time,&temp_custom.is_vip);
+		if (temp_custom.play_time> 120) {
+			temp_custom.play_time = 120;
+		}
+		temp_custom.time = temp_custom.hour*60*60 + temp_custom.minute*60 + temp_custom.second;
+		custom_queue.push_back(temp_custom);
+	}
+	sort(custom_queue.begin(),custom_queue.end(),sort_queue);
+	cin >> table_num >> vip_table_num;
+	for (int i =0;i<vip_table_num;i++) {
+		int temp_vip_num;
+		cin >> temp_vip_num;
+		is_table_vip[temp_vip_num-1] = true;
+	}
+	int index=0;
+	while(index<custom_queue.size()) {
+		custom in_costom = custom_queue[index];
+		
+		int min_table = find_min_table(in_costom);
+		int min_time = table_time[min_table];
+		if (min_time <= in_costom.time) {
+			table_time[min_table] = in_costom.time + in_costom.play_time*60;
+			in_costom.wait_time = 0;
+			in_costom.serve_time = in_costom.time;
+		} else {
+			if (is_table_vip[min_table]) {
+				int first_vip_index = index;
+				while(custom_queue[first_vip_index].is_vip != 1 && first_vip_index <custom_queue.size()-1){
+					first_vip_index++;
+				}
+				if (custom_queue[first_vip_index].is_vip && custom_queue[first_vip_index].time<=min_time) {
+					for(int i=first_vip_index;i>index;i--) {
+						swap(   custom_queue[i]   ,custom_queue[i-1]   ); 
+					}
+					in_costom = custom_queue[index];
+				}
+			}
+			table_time[min_table] = min_time + in_costom.play_time*60;
+			in_costom.wait_time = min_time - in_costom.time;
+			in_costom.serve_time = min_time;
+		}
+		index++;
+		if(in_costom.serve_time < close_time){
+			table_serve_num[min_table]++;
+			result_queue.push_back(in_costom);
+		} else {
+			break;
+		}
+	}
+	for(int i =0;i <result_queue.size();i++) {
+		custom in_costom = result_queue[i];
+		printf("%02d:%02d:%02d %02d:%02d:%02d %d\n",in_costom.hour,in_costom.minute,in_costom.second,in_costom.serve_time/60/60,in_costom.serve_time/60%60,in_costom.serve_time%60,
+			(in_costom.wait_time / 60 + (in_costom.wait_time%60 >=30?1:0)));
+	}
+	for(int i =0;i <table_num;i++) {
+		printf("%d",table_serve_num[i]);
+		if (i !=table_num -1 ){
+			cout << " ";
+		}
+	}
+	return 0;
+}
