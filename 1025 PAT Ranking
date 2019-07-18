@@ -1,0 +1,70 @@
+#include<iostream>
+#include<string>
+#include<vector>
+#include<map>
+#include<algorithm>
+using namespace std;
+
+struct testee{
+	string id;
+	int score;
+	int location;
+	int rank;
+};
+vector<testee> all_testee;
+map<string,int> id_to_location_rank;
+vector<testee> local_testee[102]; 
+int sort_testee(testee a,testee b) {
+	if (a.score != b.score) {
+		return a.score > b.score;
+	} else {
+		return a.id < b.id;
+	}
+}
+int main () {
+	int all_num;
+	ios::sync_with_stdio(false);
+	cin >> all_num;
+	for (int i = 1 ; i <= all_num ;i++) {
+		int location_num;
+		cin >> location_num;
+		for (int j = 0 ; j < location_num ;j++) {
+			testee temp;
+			cin >> temp.id;
+			cin >> temp.score;
+			temp.location = i;
+			local_testee[i].push_back(temp);
+			all_testee.push_back(temp);
+		}
+	}
+	for (int i = 1 ; i <= all_num ;i++) {
+		sort(local_testee[i].begin(),local_testee[i].end(),sort_testee);
+		int tempRank = 1;
+		int tempScore = local_testee[i][0].score;
+		id_to_location_rank[local_testee[i][0].id] = tempRank;
+		for (int j = 0 ; j < local_testee[i].size() ;j++) {
+			if (local_testee[i][j].score < tempScore) {
+				tempRank = j+1;
+				tempScore = local_testee[i][j].score;
+			}
+			id_to_location_rank[local_testee[i][j].id] = tempRank;
+		}
+	}
+
+	sort(all_testee.begin(),all_testee.end(),sort_testee);
+	int tempRank = 1;
+	int tempScore = all_testee[0].score;
+	all_testee[0].rank = tempRank;
+	for (int j =0 ; j < all_testee.size() ;j++) {
+		if (all_testee[j].score < tempScore) {
+			tempRank = j+1;
+			tempScore = all_testee[j].score;
+		}
+		all_testee[j].rank = tempRank;
+	}
+	cout << all_testee.size() << endl;
+	for (int j = 0 ; j < all_testee.size() ;j++) {
+		cout << all_testee[j].id << " "<< all_testee[j].rank << " "<< all_testee[j].location << " " <<id_to_location_rank[all_testee[j].id] << endl;
+	}
+	return 0;
+}
