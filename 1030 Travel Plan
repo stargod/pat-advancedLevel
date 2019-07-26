@@ -1,0 +1,72 @@
+#include<iostream>
+#include<vector>
+#include<map>
+#include<algorithm>
+#include<climits>
+#include<set>
+using namespace std;
+//省内存！！！
+map<int,int> distant_map[500];
+map<int,int> cost_map[500];
+bool has_arrived[500];
+int distant[500];
+int cost[500];
+int city_num,road_num,begin_num,end_num;
+int city_next[500];
+int city_before[500];
+set<int> seed;
+int main() {
+	ios::sync_with_stdio(false);
+	cin >> city_num >> road_num >> begin_num >> end_num;
+	for (int i=0;i< road_num;i++) {
+		int a,b,distant,cost;
+		cin >> a >> b >> distant>> cost;
+		distant_map[a][b] = distant;
+		distant_map[b][a] = distant;
+		cost_map[a][b] = cost;
+		cost_map[b][a] = cost;
+	}
+	has_arrived[begin_num] = true;
+	int arrive_temp = begin_num;
+	while(arrive_temp != end_num) {
+		for (auto it = distant_map[arrive_temp].begin();it != distant_map[arrive_temp].end();it++) {
+			if (has_arrived[it->first]) {
+				continue;
+			}
+			if (it->second +distant[arrive_temp] < distant[it->first] || distant[it->first] == 0) {
+				distant[it->first] = it->second +distant[arrive_temp];
+				cost[it->first] = cost_map[it->first][arrive_temp] +cost[arrive_temp];
+				city_before[it->first]= arrive_temp;
+				seed.insert(it->first);
+			} else if (it->second +distant[arrive_temp] == distant[it->first] && cost_map[it->first][arrive_temp] +cost[arrive_temp] < cost[it->first]) {
+				cost[it->first] = cost_map[it->first][arrive_temp] +cost[arrive_temp];
+				city_before[it->first]= arrive_temp;
+			}
+		}
+		int min_city_num=0;
+		int min_city_lenth=INT_MAX;
+		for (auto it = seed.begin();it != seed.end(); it++) {
+			if (!has_arrived[*it] && distant[*it] < min_city_lenth && distant[*it] != 0){
+				min_city_lenth = distant[*it];
+				min_city_num = *it;
+			}
+		}
+		arrive_temp = min_city_num;
+		seed.erase(min_city_num);
+		has_arrived[arrive_temp] = true;
+	}
+	arrive_temp = end_num;
+	while(arrive_temp != begin_num) {
+		city_next[city_before[arrive_temp]] = arrive_temp;
+		arrive_temp = city_before[arrive_temp];
+	}
+	cout << begin_num;
+	arrive_temp = begin_num;
+	while(arrive_temp != end_num) {
+		arrive_temp = city_next[arrive_temp];
+		cout << " " << arrive_temp;
+	}
+	cout << " " << distant[arrive_temp];
+	cout << " " << cost[arrive_temp];
+	return 0;
+}
