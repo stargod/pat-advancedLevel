@@ -1,0 +1,50 @@
+#include<iostream>
+#include<string>
+#include<algorithm>
+using namespace std;
+//省内存！！！
+long int array_a[100001];
+int main() {
+	ios::sync_with_stdio(false);
+	long index_a=0,index_b=0;
+	long num_a=0,num_b=0;
+	cin >> num_a;
+	for(long i=0;i<num_a;i++) {
+		long temp;
+		cin >> temp;
+		if (i>=100001) {
+			continue;
+		} else {
+			array_a[i] =temp;
+		}
+	}
+	cin >> num_b;
+	long temp  = 0,temp_b;
+	cin >> temp_b;
+	int limit = (num_a+num_b+1)/2;
+	for (long i=0; i< limit;i++) {
+		if(index_a == num_a) {
+			temp = temp_b;
+			index_b++;
+			cin >> temp_b;
+			continue;
+		}
+		long a = array_a[index_a];
+		if(index_b == num_b) {
+			index_a++;
+			temp = a;
+			continue;
+		}
+		if (a < temp_b) {
+			index_a++;
+			temp = a;
+		} else {
+			temp = temp_b;
+			index_b++;
+			cin >> temp_b;
+		}
+	}
+	cout << temp; 
+
+	return 0;
+}
