@@ -1,0 +1,40 @@
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+using namespace std;
+
+struct student{
+    string id;
+    string name;
+    int grade;
+};
+vector<student> student_vector;
+int num,sort_base;
+int sort_student(student a,student b) {
+	if(sort_base == 1) {
+		return a.id < b.id;
+	} else if(sort_base == 2 && a.name!=b.name) {
+		return a.name < b.name;
+	} else if(sort_base == 3 && a.grade!=b.grade) {
+		return a.grade < b.grade;
+	}
+	return a.id < b.id;
+}
+int main() {
+	ios::sync_with_stdio(false);
+	cin >> num >> sort_base;
+	for(int i=0;i<num;i++) {
+		student temp_student;
+		cin >> temp_student.id >> temp_student.name >> temp_student.grade;
+		student_vector.push_back(temp_student);
+	}
+	sort(student_vector.begin(),student_vector.end(),sort_student);
+
+	for(int i=0;i<num;i++) {
+		student temp_student = student_vector[i];
+		cout << temp_student.id << " " << temp_student.name << " " << temp_student.grade << endl;
+	}
+
+	return 0;
+}
