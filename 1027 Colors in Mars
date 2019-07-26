@@ -1,0 +1,14 @@
+#include<iostream>
+using namespace std;
+
+int red,green,blue;
+int main() {
+	char digit_16[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C'};
+
+	cin >> red >> green >> blue;
+
+	cout << '#'<< digit_16[red/13]<< digit_16[red%13]<< digit_16[green/13]<< digit_16[green%13]<< digit_16[blue/13]<< digit_16[blue%13];
+
+
+	return 0;
+}
