@@ -1,0 +1,92 @@
+#include<iostream>
+#include<string>
+#include<set>
+#include<algorithm>
+#include<map>
+#include<vector>
+using namespace std;
+
+struct call{
+	string a;
+	string b;
+	int weight;
+};
+struct gang{
+	string head;
+	int num;
+	int total_weight;
+	int head_weight;
+};
+call all_call[1000];
+int call_num,threthold;
+map<string,int> weight_map;
+map<string,set<string>> relation_map;
+int gang_num=0;
+map<string,bool> flag_map;
+vector<gang> all_gang;
+bool sort_gang(gang a,gang b){
+	return a.head < b.head;
+}
+gang fsp(string name){
+	string head=name;
+	int max_weight=weight_map[name];
+	gang a_gang;
+	a_gang.num=1;
+	a_gang.total_weight=weight_map[name];
+	a_gang.head_weight=weight_map[name];
+	a_gang.head = name;
+	flag_map[name] = true;
+	for(auto it= relation_map[name].begin();it!= relation_map[name].end();it++){
+		if(flag_map[*it]==false){
+			flag_map[*it] = true;
+			gang temp = fsp(*it);
+			a_gang.num+=temp.num;
+			a_gang.total_weight+=temp.total_weight;
+			if(a_gang.head_weight < temp.head_weight){
+				a_gang.head_weight=temp.head_weight;
+				a_gang.head = temp.head;
+			}
+		}
+	}
+	return a_gang;
+}
+int main(){
+	cin >> call_num >> threthold;
+	for (int i=0;i<call_num;i++){
+		cin >> all_call[i].a >> all_call[i].b >> all_call[i].weight;
+		flag_map[all_call[i].a]=false;
+		flag_map[all_call[i].b]=false;
+		relation_map[all_call[i].a].insert(all_call[i].b);
+		relation_map[all_call[i].b].insert(all_call[i].a);
+	}
+	for(int i =0;i<call_num;i++){
+		weight_map[all_call[i].a]+=all_call[i].weight;
+		weight_map[all_call[i].b]+=all_call[i].weight;
+	}
+	while(true){
+		bool is_all_arrive=true;
+		for(auto it=flag_map.begin();it!=flag_map.end();it++){
+			if(it->second == false){
+				is_all_arrive =false;
+				gang a_gang=fsp(it->first);
+				if(a_gang.num>2 && a_gang.total_weight> threthold*2){
+					all_gang.push_back(a_gang);
+				}
+				break;
+			}
+		}
+		if(is_all_arrive){
+			break;
+		}
+	}
+	if(all_gang.size() == 0){
+		cout << "0";
+	}else{
+		sort(all_gang.begin(),all_gang.end(),sort_gang);
+		cout << all_gang.size() << endl;
+		for(int i=0;i<all_gang.size();i++){
+			cout << all_gang[i].head <<" "<< all_gang[i].num <<endl;
+		}
+	}
+	return 0;
+}
