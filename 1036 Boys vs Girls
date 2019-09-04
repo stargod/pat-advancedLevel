@@ -1,0 +1,60 @@
+#include<iostream>
+#include<string>
+using namespace std;
+
+bool has_F=false;
+bool has_M=false;
+string name_F,name_M,account_M,account_F;
+int grade_F,grade_M;
+int main(){
+	int n;
+	cin >> n;
+	for(int i=0;i<n;i++){
+		string name,gender,ID;
+		int grade;
+		cin >> name >> gender >> ID >> grade;
+		if(gender == "F"){
+			if(has_F){
+				if(grade > grade_F){
+					grade_F = grade;
+					name_F = name;
+					account_F = ID;
+				}
+			}else{
+				has_F = true;
+				grade_F = grade;
+				name_F = name;
+				account_F = ID;
+			}
+		}if(gender == "M"){
+			if(has_M){
+				if(grade < grade_M){
+					grade_M = grade;
+					name_M = name;
+					account_M= ID;
+				}
+			}else{
+				has_M = true;
+				grade_M = grade;
+				name_M = name;
+				account_M= ID;
+			}
+		}
+	}
+	if(has_F){
+		cout << name_F <<  " "<<  account_F << endl;
+	}else{
+		cout << "Absent" << endl;
+	}
+	if(has_M){
+		cout << name_M <<  " "<<  account_M << endl;
+	}else{
+		cout << "Absent" << endl;
+	}
+	if(has_F && has_M){
+		cout << grade_F - grade_M << endl;
+	}else{
+		cout << "NA" << endl;
+	}
+	return 0;
+}
