@@ -1,0 +1,76 @@
+#include<iostream>
+#include<string>
+#include<algorithm>
+#include<map>
+using namespace std;
+
+int tank,distant,run_per,n;
+map<int,double> station_map;
+int station_distant[500];
+double money = 0;
+double tank_now=0;
+int max_per_distant;
+void check_station (int station_num){
+	double min_price = station_map[station_distant[station_num]];
+	int min_station=station_num;
+	for(int i=station_num+1;i<n;i++){
+		if(station_distant[i]-station_distant[station_num] >max_per_distant){
+			break;
+		}
+		if(station_map[station_distant[i]] < min_price) {
+			min_price = station_map[station_distant[i]];
+			min_station = i;
+			break;
+		}
+	}
+	int distant_to_min = station_distant[min_station]-station_distant[station_num];
+	if(distant_to_min == 0) {
+		if(distant-station_distant[station_num] <max_per_distant){
+			if((distant-station_distant[station_num])/run_per- tank_now >0){
+			money+= station_map[station_distant[station_num]]*((distant-station_distant[station_num])*1.0/run_per- tank_now);
+			tank_now = (distant-station_distant[station_num])/run_per;
+			}
+			return;
+		}
+		money+= station_map[station_distant[station_num]]*(tank-tank_now);
+		tank_now = tank;
+		return;
+	}
+	if(distant_to_min > tank_now*run_per){
+		money+= (distant_to_min*1.0/run_per - tank_now)*station_map[station_distant[station_num]];
+		tank_now = distant_to_min*1.0/run_per;
+	}
+}
+int main () {
+	cin >> tank >> distant >> run_per>> n;
+	for(int i= 0;i < n;i++) {
+		int distant_temp;
+		double price_temp;
+		cin >> price_temp >> distant_temp;
+		station_map[distant_temp]=price_temp;
+		station_distant[i]=distant_temp;
+	}
+	sort(station_distant,station_distant+n);
+	max_per_distant = tank*run_per;
+	if(station_distant[0]!=0) {
+		cout <<"The maximum travel distance = 0.00";
+		return 0;
+	}
+	int now_distant = 0;
+	for(int i =0;i<n;i++){
+		int run_distant = station_distant[i]-now_distant;
+		if (run_distant > max_per_distant){
+			cout <<"The maximum travel distance = "<<station_distant[i-1]+max_per_distant<<".00";
+			return 0;
+		}
+		tank_now = tank_now - run_distant*1.0/run_per;
+		check_station(i);
+		now_distant = station_distant[i];
+	}
+	if (distant - now_distant > max_per_distant){
+		cout <<"The maximum travel distance = "<<now_distant+max_per_distant<<".00";
+		return 0;
+	}
+	printf("%.2f",money);
+	return 0;
+}
