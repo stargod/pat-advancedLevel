@@ -1,0 +1,55 @@
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+using namespace std;
+
+vector<long long> coupons;
+vector<long long> products;
+
+int main(){
+	long coupon_num,product_num;
+	cin >> coupon_num;
+	for(long i=0;i<coupon_num;i++){
+		long long number;
+		cin >> number;
+		coupons.push_back(number);
+	}
+	cin >> product_num;
+	for(long i=0;i<product_num;i++){
+		long long number;
+		cin >> number;
+		products.push_back(number);
+	}
+	sort(coupons.begin(),coupons.end(),greater<long long>());
+	sort(products.begin(),products.end(),greater<long long>());
+	long long max_back=0;
+	int index=0;
+	while(true){
+		if(index < coupons.size() && index < products.size()){
+			if(coupons[index]> 0 && products[index] >0){
+				max_back+=coupons[index]*products[index];
+				index++;
+			}else{
+				break;
+			}
+		} else {
+			break;
+		}
+	}
+	index=1;
+	while(true){
+		if(coupons.size()-index >=0 && products.size()-index >=0){
+			if(coupons[coupons.size()-index] < 0 && products[products.size()-index] <0){
+				max_back+=coupons[coupons.size()-index]*products[products.size()-index];
+				index++;
+			}else{
+				break;
+			}
+		} else {
+			break;
+		}
+	}
+	cout << max_back;
+	return 0;
+}
