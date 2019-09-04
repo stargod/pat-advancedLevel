@@ -1,0 +1,38 @@
+#include<iostream>
+#include<string>
+#include<vector>
+#include<algorithm>
+using namespace std;
+
+vector<string> numbers;
+int compare(string a,string b){
+	return a + b < b + a;
+}
+int main() {
+	int n;
+	cin >> n;
+	for(int i=0;i<n;i++){
+		string temp;
+		cin >> temp;
+		numbers.push_back(temp);
+	}
+	sort(numbers.begin(),numbers.end(),compare);
+	bool is_first = true;
+	for(int i=0;i<n;i++){
+		if(is_first){
+			long long number = atoi(numbers[i].c_str());
+			if(number==0){
+				continue;
+			}else {
+				cout << number;
+				is_first=false;
+			}
+		}else{
+			cout << numbers[i];
+		}
+	}
+	if (is_first == true) {
+		cout<< 0;
+	}
+	return 0;
+}
