@@ -1,0 +1,50 @@
+#include<iostream>
+#include<string>
+#include<cmath>
+#include<algorithm>
+#include<vector>
+#include<map>
+#include<set>
+#include<memory.h>
+using namespace std;
+
+bool player[1001];
+int  say[1001];
+int num;
+int main() {
+	cin >> num;
+	for (int i=1;i<=num;i++){
+		cin >> say[i];
+	}
+	for(int i=1;i<num;i++){
+		for(int j=i+1;j<=num;j++){
+			memset(player,false,sizeof(bool)*1001);
+			player[i]=true;
+			player[j]=true;
+			int lie_num=0;
+			int wolf_lie=0;
+			for(int k=1;k<=num;k++){
+				if(say[k]>0 && player[say[k]]==true){
+					lie_num++;
+					if(player[k]){
+						wolf_lie ++;
+					}
+				} else if(say[k]<0 && player[-say[k]]==false){
+					lie_num++;
+					if(player[k]){
+						wolf_lie ++;
+					}
+				}
+				if(lie_num==3){
+					break;
+				}
+			}
+			if(lie_num==2 && wolf_lie==1){
+				cout << i<< " " << j;
+				return 0;
+			}
+		}
+	}
+	cout << "No Solution";
+	return 0;
+}

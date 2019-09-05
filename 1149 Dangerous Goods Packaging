@@ -1,0 +1,53 @@
+#include<iostream>
+#include<string>
+#include<cmath>
+#include<algorithm>
+#include<vector>
+#include<map>
+#include<set>
+#include<memory.h>
+using namespace std;
+
+map<int,map<int,int>> incompatible_map;
+int incompatible_num;
+int shop_num;
+int main() {
+	ios::sync_with_stdio(false);
+	cin >> incompatible_num >> shop_num;
+	for(int i=0;i<incompatible_num;i++){
+		int a,b;
+		cin >> a >> b;
+		incompatible_map[a][b]=1;
+		incompatible_map[b][a]=1;
+	}
+	for(int i=0;i<shop_num;i++){
+		int product_num;
+		cin >> product_num;
+		vector<int> product_vector;
+		for(int j=0;j<product_num;j++){
+			int product_id;
+			cin >> product_id;
+			if(incompatible_map[product_id].size()!=0){
+				product_vector.push_back(product_id);
+			}
+		}
+		bool is_incompatible=false;
+		for(int j=0;j<product_vector.size();j++){
+			for(int k=j+1;k<product_vector.size();k++){
+				if(incompatible_map[product_vector[j]][product_vector[k]]==1){
+					is_incompatible=true;
+					break;
+				}
+			}
+			if(is_incompatible){
+				break;
+			}
+		}
+		if(is_incompatible){
+			cout << "No" <<endl;
+		} else {
+			cout << "Yes" <<endl;
+		}
+	}
+	return 0;
+}
