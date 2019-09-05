@@ -1,0 +1,68 @@
+#include<iostream>
+#include<string>
+#include<cmath>
+#include<algorithm>
+#include<vector>
+#include<map>
+#include<set>
+#include<memory.h>
+using namespace std;
+
+map<int,map<int,int>> road_map;
+int city_num;
+int road_num;
+int path_num;
+int main() {
+	ios::sync_with_stdio(false);
+	cin >> city_num >> road_num;
+	for(int i=0;i<road_num;i++){
+		int a,b,dist;
+		cin >> a >> b >> dist;
+		road_map[a][b]=dist;
+		road_map[b][a]=dist;
+	}
+	cin >> path_num;
+	int min_cost=0;
+	int min_path=0;
+	for(int i=1;i<=path_num;i++){
+		int path_city_num;
+		cin >> path_city_num;
+		int cost=0;
+		vector<int> path_vector;
+		set<int> city_set;
+		bool is_NA=false;
+		for(int j=0;j<path_city_num;j++){
+			int city;
+			cin >> city;
+			path_vector.push_back(city);
+			city_set.insert(city);
+		}
+		for(int j=1;j<path_city_num;j++){
+			if(road_map[path_vector[j]][path_vector[j-1]] !=0){
+				cost+=road_map[path_vector[j]][path_vector[j-1]];
+			} else {
+				is_NA=true;
+				break;
+			}
+		}
+		cout << "Path "<<i;
+		if(is_NA){
+			cout <<": NA (Not a TS cycle)"<<endl;
+		} else if(path_vector[0]==path_vector[path_vector.size()-1]&&city_set.size()==city_num){
+			cout <<": "<< cost;
+			if(city_num== path_vector.size()-1){
+				cout <<" (TS simple cycle)"<<endl;
+			} else {
+				cout <<" (TS cycle)"<<endl;
+			}
+			if(min_cost==0 || cost<min_cost){
+				min_cost = cost;
+				min_path = i;
+			}
+		} else {
+			cout <<": "<< cost<<" (Not a TS cycle)"<<endl;;
+		}
+	}
+	cout <<"Shortest Dist("<<min_path<<") = "<< min_cost;
+	return 0;
+}
