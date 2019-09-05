@@ -1,0 +1,51 @@
+#include<iostream>
+#include<string>
+#include<cmath>
+#include<algorithm>
+#include<vector>
+#include<map>
+#include<set>
+using namespace std;
+
+int vertices_num;
+int edges_num;
+map<int,vector<int>> edge_map;
+int color[10000];
+int main() {
+	cin >> vertices_num >> edges_num;
+	for(int i=0;i<edges_num;i++){
+		int a,b;
+		cin >> a >> b;
+		edge_map[a].push_back(b);
+	}
+	int check_num;
+	cin >> check_num;
+	for(int i=0;i<check_num;i++){
+		bool is_k_color =true;
+		set<int> color_set;
+		for(int j=0;j<vertices_num;j++){
+			cin >> color[j];
+			color_set.insert(color[j]);
+		}
+		for(int j=0;j<vertices_num;j++){
+			vector<int> edges = edge_map[j];
+			if(edges.size() != 0){
+				for(int k=0;k<edges.size();k++){
+					if(color[j]==color[edges[k]]){
+						is_k_color = false;
+						break;
+					}
+				}
+			}
+			if(!is_k_color){
+				break;
+			}
+		}
+		if(is_k_color){
+			cout << color_set.size() <<"-coloring"<<endl;
+		} else {
+			cout << "No" <<endl;
+		}
+	}
+	return 0;
+}
