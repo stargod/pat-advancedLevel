@@ -1,0 +1,53 @@
+#include<iostream>
+#include<string>
+#include<cmath>
+#include<algorithm>
+using namespace std;
+
+int lenth;
+int digit;
+string number;
+bool is_prime(long long prime){
+	if(prime == 2) {
+		return true;
+	}
+	if(prime == 1 || prime == 0) {
+		return false;
+	}
+	for(int i=2;i<=sqrt((double)prime);i++){
+		if(prime%i==0){
+			return false;
+		}
+	}
+	return true;
+}
+int main() {
+	cin >> lenth >> digit >> number;
+	if(digit>lenth){
+		cout << "404";
+		return 0;
+	}
+	long long  prime_number=0;
+	long long  max_bit=1;
+	for(int i=0;i<digit;i++){
+		prime_number*=10;
+		prime_number+=number.at(i)-'0';
+		max_bit*=10;
+	}
+	max_bit/=10;
+	if(is_prime(prime_number)){
+		cout << number.substr(0,digit);
+		return 0;
+	}
+	for(int i=0;i<lenth-digit;i++){
+		prime_number-= (number.at(i)-'0')*max_bit;
+		prime_number*=10;
+		prime_number+=number.at(i+digit)-'0';
+		if(is_prime(prime_number)){
+			cout << number.substr(i+1,digit);
+			return 0;
+		}
+	}
+	cout << "404";
+	return 0;
+}
