@@ -1,0 +1,96 @@
+#include<iostream>
+#include<string>
+#include<cmath>
+#include<algorithm>
+#include<vector>
+#include<map>
+using namespace std;
+
+struct pat_info{
+	string card;
+	int score;
+};
+struct site_info{
+	string site;
+	int num;
+};
+vector<pat_info> all_info;
+map<string,vector<pat_info>> level_map;
+map<string,int> site_num_map;
+map<string,int> site_score_map;
+map<string,map<string,int>> data_site_map;
+int sort_level(pat_info a,pat_info b){
+	if(a.score!=b.score){
+		return a.score > b.score;
+	} else {
+		return a.card < b.card;
+	}
+}
+int sort_site(site_info a,site_info b){
+	if(a.num!=b.num){
+		return a.num > b.num;
+	} else {
+		return a.site < b.site;
+	}
+}
+int main() {
+	ios::sync_with_stdio(false);
+	int info_num,query_num;
+	cin >> info_num >> query_num;
+	for(int i=0;i<info_num;i++){
+		pat_info input;
+		cin >> input.card >> input.score;
+		string date = input.card.substr(4,6);
+		string level = input.card.substr(0,1);
+		string site = input.card.substr(1,3);
+		level_map[level].push_back(input);
+		data_site_map[date][site]++;
+		site_num_map[site]++;
+		site_score_map[site]+=input.score;
+	}
+	sort(level_map["T"].begin(),level_map["T"].end(),sort_level);
+	sort(level_map["A"].begin(),level_map["A"].end(),sort_level);
+	sort(level_map["B"].begin(),level_map["B"].end(),sort_level);
+	for(int i=0;i<query_num;i++){
+		int type;
+		string query;
+		cin >> type >> query;
+		cout << "Case "<<i+1<<": "<<type<<" "<<query<<endl;
+		if (type == 1) {
+			vector<pat_info> level_vector = level_map[query];
+			if(level_vector.size()==0){
+				cout << "NA" << endl;
+			} else {
+				for(int i=0;i<level_vector.size();i++){
+					cout << level_vector[i].card << " " << level_vector[i].score << endl;
+				}
+			}
+		} else if (type == 2) {
+			int site_num = site_num_map[query];
+			if(site_num==0){
+				cout << "NA" << endl;
+			} else {
+				cout << site_num << " ";
+				cout << site_score_map[query] << endl;
+			}
+		} else if (type == 3) {
+			map<string,int> site_num_map = data_site_map[query];
+			if(site_num_map.size()==0){
+				cout << "NA" << endl;
+			} else {
+				vector<site_info> site_vector;
+				for (auto it=site_num_map.begin();it!=site_num_map.end();it++){
+					site_info site_temp;
+					site_temp.site = it->first;
+					site_temp.num = it->second;
+					site_vector.push_back(site_temp);
+				}
+				sort(site_vector.begin(),site_vector.end(),sort_site);
+				for(int i=0;i<site_vector.size();i++){
+					cout << site_vector[i].site << " "<< site_vector[i].num << endl;
+				}
+			}
+		} 
+	}
+	return 0;
+}
