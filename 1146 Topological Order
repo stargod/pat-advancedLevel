@@ -1,0 +1,45 @@
+#include<iostream>
+#include<algorithm>
+#include<map>
+#include<vector>
+using namespace std;
+
+map<int,vector<int>> edge_map;
+int point_num,edge_num,test_num;
+bool flag[1001];
+vector<int> error_test;
+int main(){
+	cin >> point_num>> edge_num;
+	for(int i=0;i<edge_num;i++){
+		int a,b;
+		cin >>a >>b;
+		edge_map[b].push_back(a);
+	}
+	cin >> test_num;
+	for(int i =0;i<test_num;i++){
+		fill(flag,flag+1001,false);
+		int is_topological=true;
+		for(int j=0;j<point_num;j++){
+			int temp;
+			cin >> temp;
+			if(is_topological){
+				flag[temp]=true;
+				for(int k=0;k<edge_map[temp].size();k++){
+					if(!flag[edge_map[temp][k]]){
+						is_topological=false;
+						break;
+					}
+				}
+			}
+		}
+		if(!is_topological){
+			error_test.push_back(i);
+		}
+	}
+	for(int i=0;i<error_test.size();i++){
+		if(i!=0)
+			cout << " ";
+		cout<< error_test[i];
+	}
+	return 0;
+}

@@ -1,0 +1,65 @@
+#include<iostream>
+#include<algorithm>
+#include<map>
+#include<vector>
+using namespace std;
+
+int test_num,tree_size;
+int tree[1001];
+bool is_max,is_min;
+bool is_begin=true;
+void check_tree(int head){
+	if(head!=1){
+		int parent = head/2;
+		if(tree[parent]>tree[head]){
+			is_min=false;
+		} else if(tree[parent]<tree[head]){
+			is_max=false;
+		}
+	}
+	if(head*2<=tree_size){
+		check_tree(head*2);
+	}
+	if(head*2+1<=tree_size){
+		check_tree(head*2+1);
+	}
+}
+void print_postorder(int head){
+	if(head*2<=tree_size){
+		print_postorder(head*2);
+	}
+	if(head*2+1<=tree_size){
+		print_postorder(head*2+1);
+	}
+	if(!is_begin){
+		cout << " ";
+	} else {
+		is_begin=false;
+	}
+	cout << tree[head];
+}
+int main(){
+	cin >> test_num>> tree_size;
+	for(int i=0;i<test_num;i++){
+		if(i!=0){
+			cout<<endl;
+		}
+		is_max=true;
+		is_min=true;
+		for(int j=1;j<=tree_size;j++){
+			int temp;
+			cin >> tree[j];
+		}
+		check_tree(1);
+		if(is_max){
+			cout << "Max Heap" << endl;
+		} else if(is_min){
+			cout << "Min Heap" << endl;
+		} else {
+			cout << "Not Heap" << endl;
+		}
+		is_begin=true;
+		print_postorder(1);
+	}
+	return 0;
+}

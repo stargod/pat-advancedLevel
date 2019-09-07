@@ -1,0 +1,24 @@
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+bool number[100002];
+int num;
+int main(){
+	cin >>num;
+	fill(number,number+100002,false);
+	for (int i=0;i<num;i++){
+		int temp;
+		cin >> temp;
+		if(temp >0 && temp<100002){
+			number[temp]=true;
+		}
+	}
+	for(int i=1;i<=100002;i++){
+		if(number[i]==false){
+			cout << i;
+			break;
+		}
+	}
+	return 0;
+}
